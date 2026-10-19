@@ -25,6 +25,7 @@ end
 Install this fork from its built gem:
 
 ```powershell
+ruby .\scripts\build-gem.rb
 vagrant plugin install '.\vagrant-hanewin-nfs-1.0.1.gem'
 ```
 

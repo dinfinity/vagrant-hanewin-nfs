@@ -26,7 +26,8 @@ module VagrantPlugins
             if opts[:nfs] = true
               # Build config
               ips.each do |ip|
-                output += "%s -mapall:1000:1000 %s ##VAGRANT#%s#\n" % [opts[:hostpath].gsub('/', '\\'),ip,id]
+                # Hanewin requires quotes around export paths containing spaces.
+                output += "\"%s\" -mapall:1000:1000 %s ##VAGRANT#%s#\n" % [opts[:hostpath].gsub('/', '\\'),ip,id]
               end
 
               # Rewrite path for mount

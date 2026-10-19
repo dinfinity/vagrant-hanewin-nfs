@@ -1,13 +1,16 @@
 require 'open3'
+require 'vagrant-hanewin-nfs/settings'
 
 module VagrantPlugins
-  module VagrantHanewinNfs 
+  module VagrantHanewinNfs
     # Class reprents a windows service and allows
     # to control this service via the sc command
     class WindowsService
 
-      def initialize(name)
+      # Use the configured polling budget for both startup and shutdown.
+      def initialize(name, service_timeout_seconds = Settings::DEFAULT_SERVICE_TIMEOUT_SECONDS)
         @name = name
+        @service_timeout_seconds = service_timeout_seconds
         @sc_cmd = "sc"
         @logger = Log4r::Logger.new("vagrant::hosts::windows")
 
@@ -36,7 +39,7 @@ module VagrantPlugins
         elsif [36,103].include? status.exitstatus
           raise "Service #{@name} not found"
         else
-          raise "Unknown return code #{status.exitstatus}: #{stdout}"    
+          raise "Unknown return code #{status.exitstatus}: #{stdout}"
         end
       end
 
@@ -66,13 +69,15 @@ module VagrantPlugins
         end
       end
 
-      # Waits until service has desired state
-      def wait_for_status(state,sleep_duration=0.1, max_tries=20)
+      # Retain explicit polling overrides while defaulting to the Vagrant setting.
+      # Service query execution time is additional to this sleep budget.
+      def wait_for_status(state,sleep_duration=0.1, max_tries=nil)
+        max_tries ||= (@service_timeout_seconds / sleep_duration).ceil
         try = 0
         while status != state do
           try += 1
           sleep(sleep_duration)
-          if try >= max_tries 
+          if try >= max_tries
             raise "Error waiting for state '#{state}'"
           end
         end

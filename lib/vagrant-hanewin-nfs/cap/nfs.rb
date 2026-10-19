@@ -5,8 +5,9 @@ module VagrantPlugins
   module VagrantHanewinNfs
     module Cap
       class NFS
-        def self.nfs_config_file_path
-          VagrantHanewinNfs.get_nfs_dir.join('exports')
+        # Keep export writes and cleanup on the same configured host file.
+        def self.nfs_config_file_path(env = nil)
+          VagrantHanewinNfs.get_nfs_dir(env).join('exports')
         end
 
         def self.logger
@@ -37,11 +38,11 @@ module VagrantPlugins
             end
 
             # Remove entries with id
-            nfs_cleanup(id)
+            nfs_cleanup(id, env)
 
             # Append to config
             logger.info("Write nfs exports")
-            open(nfs_config_file_path, 'a') do |f|
+            open(nfs_config_file_path(env), 'a') do |f|
               f.write output
               f.flush
               f.close
@@ -57,15 +58,15 @@ module VagrantPlugins
           true
         end
 
-        def self.nfs_cleanup(id)
-          return if !File.exist?(nfs_config_file_path)
+        def self.nfs_cleanup(id, env = nil)
+          return if !File.exist?(nfs_config_file_path(env))
 
           #id_re = Regexp.escape(id.to_s)
 
           output = ""
 
           # read per line
-          open(nfs_config_file_path, 'r').each do |line|
+          open(nfs_config_file_path(env), 'r').each do |line|
             match = line.scan(/##VAGRANT#([^#]*)#/)
             if match.length > 0
               next if match[0][0] == id.to_s
@@ -74,7 +75,7 @@ module VagrantPlugins
           end
 
           # write to file
-          open(nfs_config_file_path, 'w') do |f|
+          open(nfs_config_file_path(env), 'w') do |f|
             f.write output
             f.flush
             f.close
@@ -85,18 +86,19 @@ module VagrantPlugins
           # TODO Implement me
         end
 
+        # Construct each service operation from this environment's final settings.
         def self.nfs_apply_command(env)
-          service = WindowsService.new('NFSserver')
+          service = WindowsService.new('NFSserver', VagrantHanewinNfs.settings(env).service_timeout_seconds)
           service.restart
         end
 
         def self.nfs_check_command(env)
-          service = WindowsService.new('NFSserver')
+          service = WindowsService.new('NFSserver', VagrantHanewinNfs.settings(env).service_timeout_seconds)
           service.status
         end
 
         def self.nfs_start_command(env)
-          service = WindowsService.new('NFSserver')
+          service = WindowsService.new('NFSserver', VagrantHanewinNfs.settings(env).service_timeout_seconds)
           service.start
         end
       end

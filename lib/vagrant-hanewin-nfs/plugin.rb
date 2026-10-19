@@ -19,6 +19,12 @@ module VagrantPlugins
 
       #action_hook(:init_i18n, :environment_load) { init_plugin }
 
+      # Keep host settings separate from the existing VM configuration override.
+      config('hanewin_nfs') do
+        require_relative 'settings'
+        Settings
+      end
+
       config("vm") do |env|
         require_relative "config"
         Config

@@ -10,9 +10,9 @@ Gem::Specification.new do |gem|
     Manage and adds support for NFS on windows.
   EOD
 
-  gem.authors  = 'Christian Simon'
-  gem.email    = 'simon@swine.de'
-  gem.homepage = 'https://github.com/simonswine/vagrant-hanewin-nfs'
+  gem.authors  = 'Christian Simon, François Knoppel'
+  gem.email    = 'dualinfinity@gmail.com'
+  gem.homepage = 'https://github.com/dinfinity/vagrant-hanewin-nfs'
 
   gem.has_rdoc = true
   gem.license  = 'Apache 2.0'

@@ -49,7 +49,7 @@ describe VagrantPlugins::VagrantHanewinNfs::Cap::NFS do
     end
     context "already existing config" do
       before(:each) do
-        @config_old = "C:\\localdev\\test -mapall:1000:1000 127.0.0.1 ##VAGRANT#208a0b6b-b713-427b-9c7f-2721ec819b80#\nC:\\localdev\\test -mapall:1000:1000 123.45.78.19 ##VAGRANT#208a0b6b-b713-427b-9c7f-2721ec819b80#\n"
+        @config_old = "\"C:\\localdev\\test\" -mapall:1000:1000 127.0.0.1 ##VAGRANT#208a0b6b-b713-427b-9c7f-2721ec819b80#\n\"C:\\localdev\\test\" -mapall:1000:1000 123.45.78.19 ##VAGRANT#208a0b6b-b713-427b-9c7f-2721ec819b80#\n"
         @tempfile.write(@config_old)
         @tempfile.flush
       end

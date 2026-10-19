@@ -34,9 +34,6 @@ module VagrantPlugins
               drive=opts[:hostpath][0].downcase
               opts[:hostpath] = "/#{drive}/#{opts[:hostpath][3..-1]}"
 
-              # Add mountoptions
-              opts[:mount_options] = ['vers=3','udp','nolock']
-
             end
 
             # Remove entries with id
